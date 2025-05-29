@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Discord Message</title>
+    <style>
+        body {
+            font-family:sans-serif;
+            background: #2c2f33;
+            color:#fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+    textarea {
+        width: 300px;
+        height: 100px;
+        margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #7289da;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+    <h1>Send Anonymous Message</h1>
+    <textarea id="message" placeholder="Type your message...."></textarea><br>
+    <button onclick="sendMessage()">Send</button>
+
+<script>
+    const webhookURL = "https://discord.com/api/webhooks/1377728914947969174/WlPzMSvKCUkgMDyIrzdfihZeLQ1_zCjlLTjyNdSRyWBgyiHGKg2EIu1KoWbcUQ7IvOvN";
+    async function sendMessage() {
+        const content = document.getElementById('message').value;
+
+        if (!content.trim()){
+            alert("Please enter a message.");
+            return;
+        }
+    const payload = {
+        content: content,
+        username: "Anonymous",
+        
+    };
+    try{
+        const response = await fetch(webhookURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+
+        });
+
+        if (response.ok) {
+            alert("Message sent!")
+            document.getElementById('message').value = "";
+        } else
+            alert("Failed to send message.");
+    
+        }
+         catch (error) {
+            alert("Error sending message.")
+            console.error(error);
+    
+        }
+    }
+</script>
+    
+</body>
+</html>
