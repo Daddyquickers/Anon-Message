@@ -74,7 +74,9 @@
         if (data.trim().length === 0) {
           quotesBox.textContent = "No quotes available yet.";
         } else {
-          quotesBox.textContent = data;
+          // Split lines, reverse, and join again
+          const reversed = data.trim().split("\n").reverse().join("\n");
+          quotesBox.textContent = reversed;
           quotesBox.classList.remove("loading");
         }
       })
