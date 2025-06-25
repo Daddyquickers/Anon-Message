@@ -1,91 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Blake Snell Quotes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #0f0f0f;
-      color: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-    }
-
-    h1 {
-      font-size: 3rem;
-      color: #ffce4f;
-      margin-bottom: 2rem;
-      text-align: center;
-      text-shadow: 0 0 5px #000;
-    }
-
-    #quotes {
-      background: #1e1e1e;
-      padding: 1.5rem;
-      border-radius: 12px;
-      max-width: 900px;
-      width: 100%;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      white-space: pre-wrap;
-      overflow-wrap: break-word;
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    .loading, .error {
-      color: #999;
-      font-style: italic;
-    }
-
-    footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
-      color: #666;
-    }
-
-    a {
-      color: #aaa;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Blake Snell Quotes</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #eee;
+    padding: 2rem;
+    max-width: 800px;
+    margin: auto;
+  }
+  h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 0.2em;
+  }
+  h2 {
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    text-align: center;
+    color: #f0c040;
+  }
+  pre {
+    background: #222;
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 0 8px #444;
+  }
+</style>
 </head>
 <body>
   <h1>Blake Snell Quotes</h1>
-  <div id="quotes" class="loading">Loading quotes from the vault...</div>
-
-  <footer>
-    Hosted on <a href="https://github.com/Daddyquickers/Anon-Message" target="_blank">GitHub</a> • Updated live by the Blake Bot
-  </footer>
+  <h2 id="latest-quote">Loading latest quote...</h2>
+  <pre id="all-quotes">Loading all quotes...</pre>
 
   <script>
-    const QUOTES_URL = "https://raw.githubusercontent.com/Daddyquickers/Anon-Message/main/blake_messages.txt";
+    async function fetchRaw(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+      return res.text();
+    }
 
-    fetch(QUOTES_URL)
-      .then(response => {
-        if (!response.ok) throw new Error("Failed to fetch");
-        return response.text();
-      })
-      .then(data => {
-        const quotesBox = document.getElementById("quotes");
-        if (data.trim().length === 0) {
-          quotesBox.textContent = "No quotes available yet.";
-        } else {
-          // Split lines, reverse, and join again
-          const reversed = data.trim().split("\n").reverse().join("\n");
-          quotesBox.textContent = reversed;
-          quotesBox.classList.remove("loading");
-        }
-      })
-      .catch(error => {
-        console.error("Error loading quotes:", error);
-        const quotesBox = document.getElementById("quotes");
-        quotesBox.textContent = "⚠️ Failed to load quotes. Try again later.";
-        quotesBox.classList.add("error");
-      });
+    async function loadQuotes() {
+      try {
+        const allQuotes = await fetchRaw('https://raw.githubusercontent.com/Daddyquickers/Anon-Message/main/blake_messages.txt');
+        const lines = allQuotes.trim().split('\n');
+        const latest = lines.length ? lines[0] : "No quotes found.";
+        document.getElementById('latest-quote').textContent = `Latest Quote: ${latest}`;
+        document.getElementById('all-quotes').textContent = allQuotes;
+      } catch (err) {
+        document.getElementById('latest-quote').textContent = "Could not load latest quote.";
+        document.getElementById('all-quotes').textContent = "Could not load all quotes.";
+        console.error(err);
+      }
+    }
+
+    loadQuotes();
   </script>
 </body>
 </html>
