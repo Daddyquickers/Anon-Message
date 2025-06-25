@@ -1,76 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Blake Snell Quotes</title>
   <style>
     body {
+      font-family: 'Segoe UI', sans-serif;
       background: #0e0e0e;
       color: #f5f5f5;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 40px;
-      margin: 0;
+      text-align: center;
+      padding: 2rem;
     }
-
     h1 {
       font-size: 3rem;
-      text-align: center;
-      margin-bottom: 30px;
-      color: #00ff90;
-      text-shadow: 2px 2px 6px rgba(0, 255, 144, 0.4);
+      margin-bottom: 2rem;
     }
-
     #quotes {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 255, 144, 0.2);
-      max-width: 800px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 1.5rem;
       margin: auto;
+      max-width: 800px;
       white-space: pre-wrap;
-      line-height: 1.6;
+      text-align: left;
       font-size: 1.1rem;
-    }
-
-    .timestamp {
-      color: #999;
-      font-size: 0.9rem;
+      line-height: 1.5;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     }
   </style>
 </head>
 <body>
-
   <h1>Blake Snell Quotes</h1>
-  <div id="quotes">Loading quotes...</div>
+  <div id="quotes">Loading latest messages...</div>
 
   <script>
-    // Replace with your actual GitHub username and repo name
-    const rawURL = "https://raw.githubusercontent.com/Daddyquickers/Anon-Message/main/blake_messages.txt";
-
-    fetch(rawURL)
-      .then(response => {
-        if (!response.ok) throw new Error("File not found or access denied");
-        return response.text();
+    fetch("https://raw.githubusercontent.com/Daddyquickers/Anon-Message/main/blake_messages.txt")
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById("quotes").textContent = text || "No quotes uploaded yet.";
       })
-      .then(data => {
-        const lines = data.trim().split('\n');
-        const html = lines.map(line => {
-          const match = line.match(/^\[(.*?)\]\s*(.*)$/);
-          if (match) {
-            const [, timestamp, message] = match;
-            return `<div><span class="timestamp">[${timestamp}]</span> ${message}</div>`;
-          } else {
-            return `<div>${line}</div>`;
-          }
-        }).join('<br>');
-
-        document.getElementById("quotes").innerHTML = html;
-      })
-      .catch(err => {
+      .catch(error => {
+        console.error("Error fetching quotes:", error);
         document.getElementById("quotes").textContent = "Failed to load quotes.";
-        console.error(err);
       });
   </script>
-
 </body>
 </html>
