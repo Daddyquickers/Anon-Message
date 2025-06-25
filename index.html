@@ -1,70 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Blake Snell Quotes</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: #eee;
-    padding: 2rem;
-    max-width: 800px;
-    margin: auto;
-  }
-  h1 {
-    font-size: 3rem;
-    text-align: center;
-    margin-bottom: 0.2em;
-  }
-  h2 {
-    font-size: 1.8rem;
-    margin-top: 0;
-    margin-bottom: 1.5em;
-    text-align: center;
-    color: #f0c040;
-  }
-  pre {
-    background: #222;
-    padding: 1rem;
-    white-space: pre-wrap;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    max-height: 70vh;
-    overflow-y: auto;
-    box-shadow: 0 0 8px #444;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>Blake Snell Quotes</title>
+    <meta http-equiv="refresh" content="15">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f1f1f1;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #ffc107;
+            margin-top: 0;
+        }
+
+        .quote-box {
+            margin: 30px auto;
+            max-width: 800px;
+            background-color: #2c2c2c;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+            text-align: left;
+        }
+
+        .quote {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+    </style>
 </head>
 <body>
-  <h1>Blake Snell Quotes</h1>
-  <h2 id="latest-quote">Loading latest quote...</h2>
-  <pre id="all-quotes">Loading all quotes...</pre>
+    <h1>Blake Snell Quotes</h1>
 
-  <script>
-    async function fetchRaw(url) {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-      return res.text();
-    }
+    <h2 id="latestQuote">Loading latest quote...</h2>
 
-    async function loadQuotes() {
-      try {
-        const allQuotes = await fetchRaw('https://raw.githubusercontent.com/Daddyquickers/Anon-Message/main/blake_messages.txt');
-        const lines = allQuotes.trim().split('\n');
-        const latest = lines.length ? lines[0] : "No quotes found.";
-        document.getElementById('latest-quote').textContent = `Latest Quote: ${latest}`;
-        document.getElementById('all-quotes').textContent = allQuotes;
-      } catch (err) {
-        document.getElementById('latest-quote').textContent = "Could not load latest quote.";
-        document.getElementById('all-quotes').textContent = "Could not load all quotes.";
-        console.error(err);
-      }
-    }
+    <div class="quote-box" id="quoteBox">
+        Loading quotes...
+    </div>
 
-    loadQuotes();
-    setInterval(loadQuotes, 1000); // Refresh every 60000 ms (60 seconds)
-  </script>
+    <script>
+        async function loadQuotes() {
+            try {
+                const response = await fetch("blake_messages.txt", { cache: "no-store" });
+                const text = await response.text();
+
+                const lines = text.trim().split(/\\r?\\n/).filter(line => line.trim() !== "");
+
+                const quoteBox = document.getElementById("quoteBox");
+                const latestQuote = document.getElementById("latestQuote");
+
+                if (lines.length === 0) {
+                    latestQuote.innerText = "No quotes available.";
+                    quoteBox.innerHTML = "<p>No messages from Blake yet.</p>";
+                    return;
+                }
+
+                latestQuote.innerText = lines[0];
+
+                quoteBox.innerHTML = lines.map(line => `<div class="quote">${line}</div>`).join("");
+            } catch (err) {
+                document.getElementById("latestQuote").innerText = "Error loading quotes.";
+                document.getElementById("quoteBox").innerHTML = "<p>Failed to fetch messages.</p>";
+                console.error("Error loading quote data:", err);
+            }
+        }
+
+        loadQuotes();
+        setInterval(loadQuotes, 15000); // Refresh every 15 seconds
+    </script>
 </body>
 </html>
